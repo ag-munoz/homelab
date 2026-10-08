@@ -1,0 +1,22 @@
+---
+- name: Actualizar la caché de APT y actualizar paquetes del sistema
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: dist
+    cache_valid_time: 3600
+
+- name: Instalar paquetes básicos de administración y red
+  ansible.builtin.apt:
+    name:
+      - curl
+      - wget
+      - git
+      - htop
+      - net-tools
+      - sudo
+      - ca-certificates
+    state: present
+
+- name: Configurar la zona horaria del sistema
+  community.general.timezone:
+    name: Europe/Madrid

@@ -1,0 +1,17 @@
+---
+- name: Crear el directorio de persistencia para la pila multimedia
+  ansible.builtin.file:
+    path: /opt/media
+    state: directory
+    mode: '0755'
+
+- name: Copiar el archivo docker-compose.yml de media desde la raíz del proyecto
+  ansible.builtin.copy:
+    src: ../../../compose/media/docker-compose.yml
+    dest: /opt/media/docker-compose.yml
+    mode: '0644'
+
+- name: Desplegar los servicios multimedia (Jellyfin, Sonarr, Radarr, Bazarr) mediante Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/media
+    state: present

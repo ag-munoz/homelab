@@ -1,0 +1,17 @@
+---
+- name: Crear el directorio de persistencia para la pila proxy
+  ansible.builtin.file:
+    path: /opt/proxy
+    state: directory
+    mode: '0755'
+
+- name: Copiar el archivo docker-compose.yml del proxy desde la raíz del proyecto
+  ansible.builtin.copy:
+    src: ../../../compose/proxy/docker-compose.yml
+    dest: /opt/proxy/docker-compose.yml
+    mode: '0644'
+
+- name: Desplegar los servicios del proxy (Traefik + Homarr) mediante Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/proxy
+    state: present

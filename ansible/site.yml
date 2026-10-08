@@ -1,0 +1,22 @@
+---
+# 1. Configuración base e instalación de Docker en todas las LXC
+- name: Preparar entorno base y runtime de contenedores
+  hosts: lxc_containers
+  become: true
+  roles:
+    - common
+    - docker
+
+# 2. Despliegue de la pila del Reverse Proxy en la LXC de Proxy
+- name: Aprovisionar servicios de red y proxy
+  hosts: proxy_nodes
+  become: true
+  roles:
+    - proxy
+
+# 3. Despliegue de la pila de aplicaciones en la LXC Multimedia
+- name: Aprovisionar servicios multimedia
+  hosts: media_nodes
+  become: true
+  roles:
+    - media
