@@ -1,0 +1,29 @@
+services:
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    command:
+      - "--api.insecure=true" # Habilita el dashboard web de Traefik en el puerto 8080
+      - "--providers.docker=true" # Le indica a Traefik que lea las etiquetas de los contenedores Docker
+      - "--providers.docker.exposedbydefault=false" # No expone contenedores a menos que se indique explícitamente
+      - "--entrypoints.web.address=:80" # Punto de entrada HTTP
+      - "--entrypoints.websecure.address=:443" # Punto de entrada HTTPS
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080" # Panel interno de control de Traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /opt/proxy/traefik/acme.json:/acme.json # Almacenamiento de certificados TLS/SSL
+    restart: unless-stopped
+
+  homarr:
+    image: ghcr.io/ajnart/homarr:latest
+    container_name: homarr
+    ports:
+      - "7575:7575"
+    volumes:
+      - /opt/proxy/homarr/configs:/app/data/configs
+      - /opt/proxy/homarr/icons:/app/public/icons
+      - /opt/proxy/homarr/data:/data
+    restart: unless-stopped
