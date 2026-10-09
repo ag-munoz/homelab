@@ -13,3 +13,8 @@ variable "admin_ip" {
   type        = string
   description = "IP de la PC de administración para acceso SSH"
 }
+
+variable "ssh_public_key" {
+  type        = string
+  description = "Clave pública SSH para el usuario root"
+}

@@ -13,7 +13,7 @@ resource "proxmox_virtual_environment_container" "lxc" {
   tags         = var.tags
 
   operating_system {
-    template_file_id = "local:vztmpl/debian-12-standard_12.2-1_amd64.tar.zst"
+    template_file_id = "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"
     type             = "debian"
   }
 
@@ -25,12 +25,21 @@ resource "proxmox_virtual_environment_container" "lxc" {
         gateway = var.gateway
       }
     }
+    user_account {
+      keys = [
+        var.ssh_public_key
+      ]
+    }
+  }
+
+  disk {
+    datastore_id = "local-lvm"
+    size         = 8
   }
 
   network_interface {
     name     = "eth0"
     bridge   = "vmbr0"
-    vlan_id  = var.vlan_tag
     firewall = true # Requerido para aplicar las reglas de Proxmox
   }
 
@@ -46,6 +55,13 @@ resource "proxmox_virtual_environment_container" "lxc" {
     nesting = var.nesting
   }
 }
+
+resource "proxmox_virtual_environment_firewall_options" "lxc_firewall_options" {
+  node_name    = "pve"
+  container_id = proxmox_virtual_environment_container.lxc.id
+  enabled      = true
+}
+
 
 resource "proxmox_virtual_environment_firewall_rules" "lxc_firewall" {
   node_name    = "pve"

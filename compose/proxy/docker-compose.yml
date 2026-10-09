@@ -20,6 +20,9 @@ services:
   homarr:
     image: ghcr.io/ajnart/homarr:latest
     container_name: homarr
+    environment:
+      - PORT=7575
+      - HOSTNAME=0.0.0.0
     ports:
       - "7575:7575"
     volumes:

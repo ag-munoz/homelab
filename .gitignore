@@ -1,13 +1,19 @@
+# Terraform
 *.tfvars
 !*.tfvars.example
-
 .terraform/
 *.tfstate
-*.tfstate.backup
+*.tfstate*
+*.tfstate.*
 .terraform.lock.hcl
 
+# Claves, secretos y logs
 *.key
 *.pem
+id_ed25519*
 .env
-.DS_Store
 *.log
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

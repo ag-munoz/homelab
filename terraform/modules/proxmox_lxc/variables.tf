@@ -8,11 +8,6 @@ variable "gateway" {
   default = "10.0.20.1" 
 }
 
-variable "vlan_tag" { 
-  type    = number 
-  default = 20 
-}
-
 variable "unprivileged" { 
   type    = bool 
   default = true 
@@ -50,4 +45,9 @@ variable "allow_public_web" {
   type        = bool
   default     = false
   description = "Habilita la apertura de los puertos 80 y 443 de entrada para el Reverse Proxy"
+}
+
+variable "ssh_public_key" {
+  type        = string
+  description = "Clave pública SSH para el usuario root"
 }
