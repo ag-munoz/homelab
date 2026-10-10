@@ -31,4 +31,5 @@ jobs:
       - name: Aprovisionar Servicios con Ansible
         run: |
           cd ansible
+          ansible-galaxy collection install community.docker
           ansible-playbook -i inventory.ini site.yml
