@@ -1,4 +1,4 @@
-# 🚀 Automated Enterprise-Grade Homelab Infrastructure
+# 🚀 Automated Homelab Infrastructure
 
 [![Proxmox VE](https://img.shields.io/badge/Proxmox_VE-8.x-E57000?style=for-the-badge&logo=proxmox&logoColor=white)](https://www.proxmox.com)
 [![Terraform](https://img.shields.io/badge/Terraform-1.x-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io)
@@ -25,34 +25,32 @@ This project demonstrates production-ready DevOps practices applied to local inf
 
 The environment runs isolated, unprivileged Debian 12 LXC containers with feature flags enabled (e.g., `nesting` for containerized runtimes).
 
-```text
-                             +-----------------------------------+
-                             |     Proxmox VE Hypervisor         |
-                             |       (Node: pve)                 |
-                             +-----------------------------------+
-                                               |
-                     +-------------------------+-------------------------+
-                     |                                                   |
-                     v                                                   v
-     +-------------------------------+                   +-------------------------------+
-     |  proxy-lxc (CT 101)           |                   |  media-lxc (CT 100)           |
-     |  IP: 192.168.0.150            |                   |  IP: 192.168.0.151            |
-     |  Role: Ingress & Dashboards   |                   |  Role: Media Processing       |
-     +-------------------------------+                   +-------------------------------+
-     | - Traefik v3 (Reverse Proxy)  |                   | - Jellyfin (Media Server)     |
-     | - Homarr (Unified Dashboard)  |                   | - Sonarr (TV Automation)      |
-     |                               |                   | - Radarr (Movie Automation)   |
-     |                               |                   | - Bazarr (Subtitle Mgmt)      |
-     +-------------------------------+                   +-------------------------------+
-                     |                                                   |
-                     +-------------------------+-------------------------+
-                                               |
-                                               v
-                                 +---------------------------+
-                                 |  Proxmox Firewall Engine  |
-                                 |  - Inbound: SSH (LAN)     |
-                                 |  - Outbound: DNS + Web    |
-                                 +---------------------------+
+```mermaid
+flowchart TD
+    Client(("LAN Network\n(192.168.0.0/24)"))
+
+    subgraph Proxmox ["Proxmox VE Hypervisor"]
+        FW{"Proxmox Firewall Engine\nInbound: SSH (22)\nOutbound: DNS/Web"}
+        
+        subgraph ProxyLXC ["proxy-lxc (CT 101) - 192.168.0.150"]
+            Traefik("Traefik v3 (Proxy)")
+            Homarr("Homarr (Dashboard)")
+        end
+        
+        subgraph MediaLXC ["media-lxc (CT 100) - 192.168.0.151"]
+            Jellyfin("Jellyfin")
+            Sonarr("Sonarr")
+            Radarr("Radarr")
+            Bazarr("Bazarr")
+        end
+    end
+
+    Client -->|SSH Management| FW
+    Client -->|HTTP/HTTPS Proxy| ProxyLXC
+    Client -->|Media Streaming| MediaLXC
+    
+    FW -.->|Secures| ProxyLXC
+    FW -.->|Secures| MediaLXC
 ```
 
 ---
@@ -83,14 +81,19 @@ The environment runs isolated, unprivileged Debian 12 LXC containers with featur
 
 ## 🌐 Deployed Services Directory
 
-| Node Name | IP Address | Service | Exposed Ports | Function |
-| :--- | :--- | :--- | :--- | :--- |
-| **`proxy-lxc`** | `192.168.0.150` | **Traefik** | `80`, `443`, `8080` | Reverse Proxy & Internal Dashboard |
-| | | **Homarr** | `7575` | Unified Homelab Portal (`healthy`) |
-| **`media-lxc`** | `192.168.0.151` | **Jellyfin** | `8096` | Media Streaming Interface |
-| | | **Sonarr** | `8989` | Smart TV Series Downloader |
-| | | **Radarr** | `7878` | Smart Movie Downloader |
-| | | **Bazarr** | `6767` | Automated Subtitle Synchronization |
+### 🟢 `proxy-lxc` (IP: 192.168.0.150)
+| Service | Exposed Ports | Function |
+| :--- | :--- | :--- |
+| **Traefik** | `80`, `443`, `8080` | Reverse Proxy & Internal Dashboard |
+| **Homarr** | `7575` | Unified Homelab Portal (`healthy`) |
+
+### 🔵 `media-lxc` (IP: 192.168.0.151)
+| Service | Exposed Ports | Function |
+| :--- | :--- | :--- |
+| **Jellyfin** | `8096` | Media Streaming Interface |
+| **Sonarr** | `8989` | Smart TV Series Downloader |
+| **Radarr** | `7878` | Smart Movie Downloader |
+| **Bazarr** | `6767` | Automated Subtitle Synchronization |
 
 ---
 
