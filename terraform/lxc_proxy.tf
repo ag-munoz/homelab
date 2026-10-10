@@ -11,4 +11,5 @@ module "lxc_proxy" {
   admin_ip         = var.admin_ip
   allow_public_web = true
   ssh_public_key = var.ssh_public_key
+  vmid   = 101
 }

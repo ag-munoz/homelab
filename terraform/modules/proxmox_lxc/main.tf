@@ -11,6 +11,7 @@ resource "proxmox_virtual_environment_container" "lxc" {
   node_name    = "pve"
   unprivileged = var.unprivileged
   tags         = var.tags
+  vm_id        = var.vmid
 
   operating_system {
     template_file_id = "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"

@@ -12,4 +12,5 @@ module "lxc_media" {
   proxy_ip     = "192.168.0.150"
   service_port = "8096"
   ssh_public_key = var.ssh_public_key
+  vmid   = 100
 }

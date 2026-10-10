@@ -20,9 +20,3 @@
   become: true
   roles:
     - media
-
-- name: Aprovisionar runner
-  hosts: runner_nodes
-  become: true
-  roles:
-    - runner

@@ -3,6 +3,12 @@ variable "cores" { type = number }
 variable "memory" { type = number }
 variable "ip_address" { type = string }
 
+variable "vmid" {
+  type        = number
+  description = "ID único del contenedor en Proxmox VE"
+  default     = null
+}
+
 variable "gateway" { 
   type    = string 
   default = "10.0.20.1" 

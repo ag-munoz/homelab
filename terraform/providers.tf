@@ -1,5 +1,9 @@
 terraform {
   required_version = ">= 1.5.0"
+  backend "local" {
+    path = "/var/lib/terraform/homelab.tfstate"
+  }
+
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
