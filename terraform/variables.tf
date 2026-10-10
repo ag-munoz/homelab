@@ -8,7 +8,7 @@ variable "proxmox_api_token_id" {
   description = "ID del token de API de Proxmox"
 }
 
-variable "proxmox_api_token" {
+variable "proxmox_api_token_secret" {
   type        = string
   description = "Token de autenticación de Proxmox"
   sensitive   = true
