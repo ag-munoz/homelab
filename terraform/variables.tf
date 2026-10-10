@@ -17,7 +17,7 @@ variable "proxmox_api_token_secret" {
 variable "admin_ip" {
   type        = string
   description = "IP de la PC de administración para acceso SSH"
-  default     = "192.168.0.106/24"
+  default     = "192.168.0.0/24"
 }
 
 variable "ssh_public_key" {
