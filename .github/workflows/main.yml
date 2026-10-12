@@ -8,9 +8,6 @@ jobs:
   deploy:
     runs-on: self-hosted
 
-    env:
-      TF_DATA_DIR: "${{ github.workspace }}/.terraform"
-
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
