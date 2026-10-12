@@ -19,17 +19,17 @@ jobs:
         run: terraform init
         working-directory: ./terraform
         env:
-          PROXMOX_API_URL: ${{ secrets.PROXMOX_API_URL }}
-          PROXMOX_API_TOKEN_ID: ${{ secrets.PROXMOX_API_TOKEN_ID }}
-          PROXMOX_API_TOKEN_SECRET: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
+          TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
+          TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
+          TF_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./terraform
         env:
-          PROXMOX_API_URL: ${{ secrets.PROXMOX_API_URL }}
-          PROXMOX_API_TOKEN_ID: ${{ secrets.PROXMOX_API_TOKEN_ID }}
-          PROXMOX_API_TOKEN_SECRET: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
+          TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
+          TF_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
+          TF_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
 
       - name: Configurar agente SSH para Ansible
         uses: webfactory/ssh-agent@v0.9.0
