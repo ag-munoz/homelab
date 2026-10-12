@@ -16,7 +16,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -migrate-state -force-copy
         working-directory: ./terraform
         env:
           TF_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
