@@ -1,4 +1,15 @@
 ---
+# 0. Esperar a que se enciendan los contenedores
+- name: Esperar a que los contenedores estén listos por SSH
+  hosts: all
+  gather_facts: false # Desactivado para que no intente conectar antes de tiempo
+  tasks:
+    - name: Esperar a que SSH acepte conexiones
+      ansible.builtin.wait_for_connection:
+        delay: 5
+        timeout: 60
+        connect_timeout: 5
+
 # 1. Configuración base e instalación de Docker en todas las LXC
 - name: Preparar entorno base y runtime de contenedores
   hosts: lxc_containers
@@ -20,3 +31,10 @@
   become: true
   roles:
     - media
+
+# 4. Despliegue del runner de GitHub
+- name: Aprovisionar runner
+  hosts: runner_nodes
+  become: true
+  roles:
+    - runner
