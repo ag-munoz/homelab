@@ -12,6 +12,7 @@
       - unzip
       - git
       - nodejs
+      - ansible
     state: present
     update_cache: true
 
