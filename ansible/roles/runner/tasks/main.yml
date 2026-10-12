@@ -4,6 +4,17 @@
     path: /actions-runner/.runner
   register: runner_installed
 
+- name: Instalar dependencias del sistema para el runner
+  ansible.builtin.apt:
+    name:
+      - curl
+      - tar
+      - unzip
+      - git
+      - nodejs
+    state: present
+    update_cache: true
+
 - name: Obtener token de registro dinámico desde la API de GitHub
   ansible.builtin.uri:
     url: "https://api.github.com/repos/{{ github_repo | default('ag-munoz/homelab') }}/actions/runners/registration-token"
