@@ -99,13 +99,6 @@ resource "proxmox_virtual_environment_firewall_rules" "lxc_firewall" {
 
   rule {
     type    = "out"
-    action  = "REJECT"
-    dest    = "192.168.0.0/24"
-    comment = "Bloquea salida a la LAN domestica"
-  }
-
-  rule {
-    type    = "out"
     action  = "ACCEPT"
     proto   = "udp"
     dport   = "53"
@@ -119,4 +112,13 @@ resource "proxmox_virtual_environment_firewall_rules" "lxc_firewall" {
     dport   = "80,443"
     comment = "Permite trafico HTTP/HTTPS saliente a Internet"
   }
+
+  rule {
+    type    = "out"
+    action  = "REJECT"
+    dest    = "192.168.0.0/24"
+    comment = "Bloquea salida a la LAN domestica"
+  }
+
+
 }

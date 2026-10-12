@@ -1,0 +1,75 @@
+---
+- name: Comprobar si el runner ya está registrado
+  ansible.builtin.stat:
+    path: /actions-runner/.runner
+  register: runner_installed
+
+- name: Obtener token de registro dinámico desde la API de GitHub
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/{{ github_repo | default('ag-munoz/homelab') }}/actions/runners/registration-token"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ github_pat }}"
+      Accept: "application/vnd.github+json"
+      X-GitHub-Api-Version: "2022-11-28"
+    status_code: 201
+  register: registration_response
+  when: not runner_installed.stat.exists
+
+- name: Crear usuario dedicado para el runner
+  ansible.builtin.user:
+    name: runner
+    groups: docker
+    append: true
+    shell: /bin/bash
+    create_home: true
+
+- name: Crear directorio de instalación
+  ansible.builtin.file:
+    path: /actions-runner
+    state: directory
+    owner: runner
+    group: runner
+    mode: '0755'
+
+- name: Descargar y extraer el runner de GitHub Actions
+  ansible.builtin.unarchive:
+    src: "https://github.com/actions/runner/releases/download/v2.338.0/actions-runner-linux-x64-2.338.0.tar.gz"
+    dest: /actions-runner
+    remote_src: true
+    owner: runner
+    group: runner
+  when: not runner_installed.stat.exists
+
+- name: Instalar dependencias del sistema requeridas por el runner
+  ansible.builtin.command:
+    cmd: ./bin/installdependencies.sh
+    chdir: /actions-runner
+  when: not runner_installed.stat.exists
+
+- name: Registrar el runner en el repositorio
+  ansible.builtin.command:
+    cmd: >
+      ./config.sh
+      --url https://github.com/{{ github_repo | default('ag-munoz/homelab') }}
+      --token {{ registration_response.json.token }}
+      --name {{ ansible_hostname }}
+      --work _work
+      --unattended
+      --replace
+    chdir: /actions-runner
+  become: true
+  become_user: runner
+  when: not runner_installed.stat.exists
+
+- name: Instalar el servicio systemd del runner
+  ansible.builtin.command:
+    cmd: ./svc.sh install runner
+    chdir: /actions-runner
+  when: not runner_installed.stat.exists
+
+- name: Iniciar el servicio systemd del runner
+  ansible.builtin.command:
+    cmd: ./svc.sh start
+    chdir: /actions-runner
+  when: not runner_installed.stat.exists
