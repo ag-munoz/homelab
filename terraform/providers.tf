@@ -1,7 +1,7 @@
 terraform {
   required_version = ">= 1.5.0"
   backend "local" {
-    path = "/var/lib/terraform/homelab.tfstate"
+    path = "homelab.tfstate"
   }
 
   required_providers {
