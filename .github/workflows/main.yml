@@ -38,6 +38,9 @@ jobs:
 
       - name: Ejecutar Ansible Playbook
         run: |
+          export LC_ALL=C.UTF-8
+          export LANG=C.UTF-8
+          ansible-galaxy collection install community.docker
           export ANSIBLE_HOST_KEY_CHECKING=False
           ansible-playbook -i inventory.ini site.yml -e "github_pat=${{ secrets.GH_PAT }}"
         working-directory: ./ansible
