@@ -15,11 +15,6 @@ jobs:
       - name: Configurar Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Preparar directorio de Terraform
-        run: |
-          sudo mkdir -p /var/lib/terraform
-          sudo chown -R $USER:$USER /var/lib/terraform
-
       - name: Terraform Init
         run: terraform init
         working-directory: ./terraform
