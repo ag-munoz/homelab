@@ -1,154 +1,128 @@
-# 🚀 Automated Homelab Infrastructure
+# 🏗️ Infrastructure as Code & GitOps Environment
 
-[![Proxmox VE](https://img.shields.io/badge/Proxmox_VE-8.x-E57000?style=for-the-badge&logo=proxmox&logoColor=white)](https://www.proxmox.com)
-[![Terraform](https://img.shields.io/badge/Terraform-1.x-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io)
-[![Ansible](https://img.shields.io/badge/Ansible-2.x-EE0000?style=for-the-badge&logo=ansible&logoColor=white)](https://www.ansible.com)
-[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat&logo=terraform&logoColor=white)]()
+[![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=flat&logo=ansible&logoColor=white)]()
+[![Proxmox](https://img.shields.io/badge/Proxmox-E57000?style=flat&logo=proxmox&logoColor=white)]()
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)]()
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat&logo=github-actions&logoColor=white)]()
+[![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
 
-An **Infrastructure as Code (IaC)** and **Automated Configuration Management** repository that provisions, secures, and deploys a reproducible, self-healing Homelab environment on **Proxmox VE** using **Terraform**, **Ansible**, and **Docker**.
+Este repositorio contiene la arquitectura completa, aprovisionamiento automatizado y gestión de configuración de una infraestructura de nube privada (*Homelab*). 
 
----
+El proyecto sirve como **Prueba de Concepto (PoC)** y entorno de producción personal para demostrar la aplicación de prácticas modernas de **DevOps, Site Reliability Engineering (SRE) y GitOps**.
 
-## 🎯 Executive Summary & Core Competencies
+## 🎯 Objetivos del Proyecto & Prácticas Implementadas
 
-This project demonstrates production-ready DevOps practices applied to local infrastructure:
-
-- **Zero-Touch Provisioning:** Full end-to-end automation from hypervisor container creation to containerized service health check validation.
-- **Declarative Infrastructure:** 100% defined in code via Terraform using the `bpg/proxmox` provider.
-- **Configuration & Orchestration:** Idempotent Ansible playbooks for system hardening, Docker engine deployment, and Compose stack lifecycle.
-- **Security & Network Segmentation:** Granular per-container Proxmox firewalls, isolated LXCs, automated SSH key injection, and restricted LAN administration limits.
-
----
-
-## 📐 Architecture & Network Topology
-
-The environment runs isolated, unprivileged Debian 12 LXC containers with feature flags enabled (e.g., `nesting` for containerized runtimes).
-
-```mermaid
-flowchart TD
-    Client(("LAN Network\n(192.168.0.0/24)"))
-
-    subgraph Proxmox ["Proxmox VE Hypervisor"]
-        FW{"Proxmox Firewall Engine\nInbound: SSH (22)\nOutbound: DNS/Web"}
-        
-        subgraph ProxyLXC ["proxy-lxc (CT 101) - 192.168.0.150"]
-            Traefik("Traefik v3 (Proxy)")
-            Homarr("Homarr (Dashboard)")
-        end
-        
-        subgraph MediaLXC ["media-lxc (CT 100) - 192.168.0.151"]
-            Jellyfin("Jellyfin")
-            Sonarr("Sonarr")
-            Radarr("Radarr")
-            Bazarr("Bazarr")
-        end
-    end
-
-    Client -->|SSH Management| FW
-    Client -->|HTTP/HTTPS Proxy| ProxyLXC
-    Client -->|Media Streaming| MediaLXC
-    
-    FW -.->|Secures| ProxyLXC
-    FW -.->|Secures| MediaLXC
-```
+- **Aprovisionamiento Declarativo (IaC):** Creación de infraestructura inmutable y reproducible utilizando Terraform.
+- **Gestión de Configuración Idempotente:** Estandarización de nodos y despliegue de software automatizado mediante Ansible.
+- **Arquitectura Modular:** Uso de módulos de Terraform y *Roles* de Ansible para maximizar la reutilización del código.
+- **Integración y Despliegue Continuo (CI/CD):** Pipelines automatizados con GitHub Actions utilizando *Self-Hosted Runners* para operar de forma segura detrás del firewall.
+- **Aislamiento de Servicios:** Segmentación de cargas de trabajo en contenedores LXC (capa de SO) y Docker (capa de aplicación).
 
 ---
 
-## 🛠️ Tech Stack & Key Features
+## 📐 Arquitectura del Sistema y Flujo GitOps
 
-| Component | Technology | Purpose & Implementation Highlights |
-| :--- | :--- | :--- |
-| **Hypervisor** | Proxmox VE 8.x | LXC virtualization with unprivileged isolation and `nesting` enabled. |
-| **Provisioning** | Terraform (`bpg/proxmox`) | Modularized resource definitions, provider-managed firewalls, and storage mapping. |
-| **Config Management** | Ansible | Automated package management, Docker engine provisioning, and Compose deployment. |
-| **Reverse Proxy** | Traefik v3 | Dynamic routing, SSL management, and container exposure control. |
-| **Dashboard** | Homarr | Tailored interface with explicit `HOSTNAME` and `PORT` environment bindings. |
-| **Media Suite** | Jellyfin + *arr Stack | Fully integrated entertainment automation pipeline (Sonarr, Radarr, Bazarr). |
-
----
-
-## 🔒 Security Architecture
-
-1. **Automated SSH Key Injection:** Terraform dynamically injects developer public keys (`~/.ssh/id_ed25519.pub`) during container initialization, completely eliminating password authentication.
-2. **Stateful Proxmox Firewall:**
-   * Global firewall switches enabled programmatically via `proxmox_virtual_environment_firewall_options`.
-   * Strictly limited inbound access: Port `22` (SSH) is locked to the local administrative subnetwork (`192.168.0.0/24`).
-   * Explicit egress restrictions blocking unauthorized internal LAN pivoting while allowing DNS (`53/UDP`) and HTTP/S (`80,443/TCP`).
-3. **Resilient Container Health Checks:** Custom environment variables (`PORT=7575`, `HOSTNAME=0.0.0.0`) configured to ensure accurate Docker health status reporting.
-
----
-
-## 🌐 Deployed Services Directory
-
-### 🟢 `proxy-lxc` (IP: 192.168.0.150)
-| Service | Exposed Ports | Function |
-| :--- | :--- | :--- |
-| **Traefik** | `80`, `443`, `8080` | Reverse Proxy & Internal Dashboard |
-| **Homarr** | `7575` | Unified Homelab Portal (`healthy`) |
-
-### 🔵 `media-lxc` (IP: 192.168.0.151)
-| Service | Exposed Ports | Function |
-| :--- | :--- | :--- |
-| **Jellyfin** | `8096` | Media Streaming Interface |
-| **Sonarr** | `8989` | Smart TV Series Downloader |
-| **Radarr** | `7878` | Smart Movie Downloader |
-| **Bazarr** | `6767` | Automated Subtitle Synchronization |
-
----
-
-## 📁 Repository Structure
+El ciclo de vida de la infraestructura está completamente automatizado y versionado en este repositorio. Cualquier cambio en la rama principal dispara el pipeline de reconciliación.
 
 ```text
-homelab/
-├── .gitignore                      # Prevents staging secrets, keys, and tfstate files
-├── README.md                       # Infrastructure documentation
-├── terraform/                      # Infrastructure as Code
-│   ├── main.tf                     # Environment invocation & backend config
-│   ├── variables.tf                # Environment input variables
-│   ├── outputs.tf                  # Generated IP and node information
-│   └── modules/
-│       └── proxmox_lxc/            # Reusable LXC & Firewall terraform module
-└── ansible/                        # Configuration & Deployment
-    ├── inventory.ini               # Host definitions and SSH mappings
-    ├── site.yml                    # Main orchestration playbook
-    └── roles/                      # Provisioning roles (Docker, Proxy, Media)
+ ┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐
+ │ 1. Git (Fuente)  │      │ 2. CI/CD Pipeline│      │ 3. Hypervisor    │
+ │ Modificación de  ├─────►│ GitHub Actions   ├─────►│ Proxmox VE API   │
+ │ código (Push)    │      │ (Self-Hosted)    │      │                  │
+ └──────────────────┘      └────────┬─────────┘      └─────────┬────────┘
+                                    │                          │
+                                    ▼                          ▼
+ ┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐
+ │ 6. Aplicación    │      │ 5. Configuración │      │ 4. IaC / Compute │
+ │ Docker / Compose │◄─────┤ Ansible Roles    │◄─────┤ Terraform State  │
+ │ (Servicios UP)   │      │ (Idempotencia)   │      │ (LXC Containers) │
+ └──────────────────┘      └──────────────────┘      └──────────────────┘
 ```
 
 ---
 
-## 🚀 Deployment Workflow
+## 🛠️ Stack Tecnológico
 
-### 1. Prerequisites
-* Proxmox VE host configured with API token or SSH access.
-* Local workstation with `terraform` (>= 1.5) and `ansible` installed.
-* SSH key pair generated at `~/.ssh/id_ed25519`.
+| Capa | Tecnología | Propósito |
+| :--- | :--- | :--- |
+| **Virtualización / Compute** | Proxmox VE | Hipervisor bare-metal y gestión de contenedores LXC. |
+| **Infraestructura (IaC)** | Terraform | Definición del estado de la infraestructura y aprovisionamiento. |
+| **Configuración (CaC)** | Ansible | Orquestación, hardening del SO y despliegue de dependencias. |
+| **Contenedorización** | Docker & Compose | Aislamiento de aplicaciones a nivel de microservicios. |
+| **CI/CD** | GitHub Actions | Automatización de flujos de trabajo (*Pipelines*). |
 
-### 2. Infrastructure Provisioning (Terraform)
+---
+
+## 📁 Estructura del Repositorio
+
+El código está estructurado siguiendo las mejores prácticas de separación de responsabilidades:
+
+```text
+├── .github/workflows/       # Definición de pipelines de CI/CD
+├── ansible/                 # Playbooks y Roles (Configuration as Code)
+│   ├── inventory.ini        # Inventario dinámico/estático de nodos
+│   ├── site.yml             # Orquestador principal de Playbooks
+│   └── roles/               
+│       ├── common/          # Tareas base (Hardening, utilidades, usuarios)
+│       ├── docker/          # Instalación automatizada del daemon de Docker
+│       ├── media/           # Stack de aplicaciones (Carga de trabajo A)
+│       ├── proxy/           # Capa de red y Reverse Proxy (Carga de trabajo B)
+│       └── runner/          # Aprovisionamiento del Agente de CI/CD
+├── compose/                 # Manifiestos declarativos de Docker
+│   ├── media/               
+│   └── proxy/               
+└── terraform/               # Código de Infraestructura (HCL)
+    ├── modules/proxmox_lxc/ # Módulo DRY personalizado para estandarizar LXCs
+    ├── lxc_*.tf             # Definiciones de nodos específicos
+    ├── providers.tf         # Configuración del provider de Telmate/bpg
+    └── variables.tf         # Inyección de variables de entorno y estado
+```
+
+---
+
+## 🤖 CI/CD Pipeline (GitHub Actions)
+
+El despliegue está completamente automatizado. Al hacer un *push* o *merge* a la rama `main`, el archivo `main.yml` orquesta el siguiente flujo utilizando un **Self-Hosted Runner** interno:
+
+1. **Linting & Validación:** Comprobación de sintaxis en Terraform y Ansible.
+2. **Terraform Apply:** Sincronización del estado de la infraestructura en Proxmox.
+3. **Ansible Provisioning:** Ejecución del playbook principal para aplicar configuraciones a los LXC y redesplegar los contenedores Docker afectados.
+
+### Requisitos de Secrets
+Para el correcto funcionamiento del pipeline, es necesario inyectar los siguientes secretos en la configuración de GitHub (`Settings > Secrets and variables`):
+- `PROXMOX_API_URL`
+- `PROXMOX_API_TOKEN_ID`
+- `PROXMOX_API_TOKEN_SECRET`
+- `SSH_PRIVATE_KEY` *(Para la conexión de Ansible a los LXC)*
+
+---
+
+## 🔒 Seguridad y Gestión de Secretos
+
+Para cumplir con los estándares de seguridad empresariales, el proyecto implementa:
+
+1. **Inyección de Secretos:** Ninguna credencial o token está hardcodeado en el código. Terraform y Ansible consumen el entorno de CI/CD o archivos locales `.env`.
+2. **Principio de Menor Privilegio:** Uso de un *Self-Hosted Runner* efímero que se comunica localmente con la API de Proxmox, evitando exponer paneles de administración a internet.
+3. **Segmentación de Red:** Los servicios expuestos (Proxy Inverso) se ejecutan en contenedores separados lógicamente de las cargas de trabajo internas.
+
+---
+
+## 🚀 Despliegue Manual / Onboarding Local
+
+Para replicar o desarrollar sobre este entorno de manera local sin pasar por el pipeline:
+
+### 1. Aprovisionamiento (Terraform)
 ```bash
 cd terraform
 terraform init
-terraform plan
-terraform apply -auto-approve
+terraform plan -out=tfplan
+terraform apply "tfplan"
 ```
 
-### 3. Application & Service Deployment (Ansible)
+### 2. Configuración y Orquestación (Ansible)
+Una vez que el proveedor de infraestructura reporta el estado exitoso, se ejecuta la configuración:
 ```bash
-cd ../ansible
+cd ansible
 ansible-playbook -i inventory.ini site.yml
 ```
-
-### 4. Automated Health Verification
-```bash
-# Verify SSH Connectivity
-ansible all -i inventory.ini -m ping
-
-# Verify Running Docker Containers & Health States
-ansible all -i inventory.ini -m command -a "docker ps"
-```
-
----
-
-## 📜 License & Author
-
-Distributed under the MIT License. Designed and maintained as part of a DevOps/SRE Infrastructure Portfolio.
