@@ -10,7 +10,7 @@ services:
       - "8096:8096"
     volumes:
       - /opt/media/jellyfin/config:/config
-      - /mnt/storage/media:/data/media
+      - /mnt/pve/disk1/media:/data/media
     restart: unless-stopped
 
   sonarr:
