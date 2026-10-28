@@ -24,7 +24,7 @@ services:
       - "8989:8989"
     volumes:
       - /opt/media/sonarr/config:/config
-      - /mnt/pve/disk1/media:/data/media
+      - /mnt/pve/disk1:/data
     restart: unless-stopped
 
   radarr:
@@ -38,7 +38,7 @@ services:
       - "7878:7878"
     volumes:
       - /opt/media/radarr/config:/config
-      - /mnt/pve/disk1/media:/data/media
+      - /mnt/pve/disk1:/data
     restart: unless-stopped
 
   bazarr:
@@ -52,7 +52,7 @@ services:
       - "6767:6767"
     volumes:
       - /opt/media/bazarr/config:/config
-      - /mnt/pve/disk1/media:/data/media
+      - /mnt/pve/disk1:/data
     restart: unless-stopped
     
   prowlarr:
