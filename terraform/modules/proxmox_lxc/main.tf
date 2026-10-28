@@ -55,6 +55,11 @@ resource "proxmox_virtual_environment_container" "lxc" {
   features {
     nesting = var.nesting
   }
+
+  mount_point {
+    volume = "/mnt/pve/disk1"
+    path   = "/mnt/pve/disk1"
+  }
 }
 
 resource "proxmox_virtual_environment_firewall_options" "lxc_firewall_options" {
