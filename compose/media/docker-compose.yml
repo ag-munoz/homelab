@@ -67,3 +67,21 @@ services:
     volumes:
       - /opt/media/prowlarr/config:/config
     restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Madrid
+      - WEBUI_PORT=8123
+      - TORRENTING_PORT=6881
+    ports:
+      - "8123:8123"
+      - "6881:6881"
+      - "6881:6881/udp"
+    volumes:
+      - /opt/media/qbittorrent/config:/config
+      - /mnt/pve/disk1:/data
+    restart: unless-stopped
