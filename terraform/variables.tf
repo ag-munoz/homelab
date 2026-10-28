@@ -25,3 +25,13 @@ variable "ssh_public_key" {
   description = "Clave pública SSH para el usuario root"
   default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPtKycX4q6a1zZWvJVWhK+DBvMhkcetIP/uLrkC+OnFU homelab"
 }
+
+variable "proxmox_username" {
+  type    = string
+  default = "root@pam"
+}
+
+variable "proxmox_password" {
+  type      = string
+  sensitive = true
+}
