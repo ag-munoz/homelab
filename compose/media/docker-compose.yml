@@ -54,3 +54,16 @@ services:
       - /opt/media/bazarr/config:/config
       - /mnt/pve/disk1/media:/data/media
     restart: unless-stopped
+    
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Madrid
+    ports:
+      - "9696:9696"
+    volumes:
+      - /opt/media/prowlarr/config:/config
+    restart: unless-stopped
