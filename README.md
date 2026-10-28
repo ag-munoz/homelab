@@ -94,6 +94,7 @@ Para el correcto funcionamiento del pipeline, es necesario inyectar los siguient
 - `PROXMOX_API_URL`
 - `PROXMOX_API_TOKEN_ID`
 - `PROXMOX_API_TOKEN_SECRET`
+- `PROXMOX_PASSWORD`
 - `SSH_PRIVATE_KEY` *(Para la conexión de Ansible a los LXC)*
 - `SSH_PUBLIC_KEY`
 - `ADMIN_IP`
