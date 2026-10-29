@@ -84,7 +84,7 @@ El código está estructurado siguiendo las mejores prácticas de separación de
 ## 🤖 CI/CD Pipeline (GitHub Actions)
 
 El despliegue está completamente automatizado. Al hacer un *push* o *merge* a la rama `main`, el archivo `main.yml` orquesta el siguiente flujo utilizando un **Self-Hosted Runner** interno:
-
+ 
 1. **Linting & Validación:** Comprobación de sintaxis en Terraform y Ansible.
 2. **Terraform Apply:** Sincronización del estado de la infraestructura en Proxmox.
 3. **Ansible Provisioning:** Ejecución del playbook principal para aplicar configuraciones a los LXC y redesplegar los contenedores Docker afectados.
