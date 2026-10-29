@@ -61,12 +61,12 @@ resource "proxmox_virtual_environment_container" "lxc" {
     path   = "/mnt/pve/disk1"
   }
 
-  dev_passthrough {
+  device_passthrough {
     path = "/dev/dri/renderD128"
     mode = "0666"
   }
 
-  dev_passthrough {
+  device_passthrough {
     path = "/dev/dri/card0"
     mode = "0666"
   }
