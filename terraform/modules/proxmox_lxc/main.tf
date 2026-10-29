@@ -60,6 +60,16 @@ resource "proxmox_virtual_environment_container" "lxc" {
     volume = "/mnt/pve/disk1"
     path   = "/mnt/pve/disk1"
   }
+
+  dev_passthrough {
+    path = "/dev/dri/renderD128"
+    mode = "0666"
+  }
+
+  dev_passthrough {
+    path = "/dev/dri/card0"
+    mode = "0666"
+  }
 }
 
 resource "proxmox_virtual_environment_firewall_options" "lxc_firewall_options" {
