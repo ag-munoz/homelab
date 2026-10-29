@@ -16,6 +16,6 @@ provider "proxmox" {
   endpoint  = var.proxmox_api_url
   username = var.proxmox_username
   password = var.proxmox_password
-  api_token = "${var.proxmox_api_token_id}=${var.proxmox_api_token_secret}"
+  # api_token = "${var.proxmox_api_token_id}=${var.proxmox_api_token_secret}"
   insecure  = true
 }
