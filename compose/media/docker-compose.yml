@@ -13,6 +13,8 @@ services:
       - /mnt/pve/disk1/media:/data/media
     devices:
       - /dev/dri:/dev/dri
+    group_add:
+      - "65534"
     restart: unless-stopped
 
   sonarr:
