@@ -11,6 +11,12 @@
     dest: /opt/proxy/docker-compose.yml
     mode: '0644'
 
+- name: Crear archivo acme.json vacio con permisos estrictos
+  ansible.builtin.file:
+    path: /opt/proxy/traefik/acme.json
+    state: touch
+    mode: '0600'
+
 - name: Desplegar los servicios del proxy (Traefik + Homarr) mediante Docker Compose
   community.docker.docker_compose_v2:
     project_src: /opt/proxy
