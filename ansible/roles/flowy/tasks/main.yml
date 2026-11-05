@@ -1,19 +1,19 @@
 ---
 - name: Clonar el repositorio de AppFlowy
-      ansible.builtin.git:
-        repo: 'https://github.com/AppFlowy-IO/AppFlowy-SelfHost-Commercial.git'
-        dest: '/opt/appflowy'
-        version: 'main' # Ajusta la rama o tag si lo necesitas
-        update: yes
+  ansible.builtin.git:
+    repo: 'https://github.com/AppFlowy-IO/AppFlowy-SelfHost-Commercial.git'
+    dest: '/opt/appflowy'
+    version: 'main'
+    update: yes
 
-    - name: Copiar deploy.env como .env si no existe
-      ansible.builtin.copy:
-        src: '/opt/appflowy/deploy.env'
-        dest: '/opt/appflowy/.env'
-        remote_src: yes
-        force: no
+- name: Copiar deploy.env como .env si no existe
+  ansible.builtin.copy:
+    src: '/opt/appflowy/deploy.env'
+    dest: '/opt/appflowy/.env'
+    remote_src: yes
+    force: no
 
-    - name: Levantar los servicios con Docker Compose
-      community.docker.docker_compose_v2:
-        project_src: '/opt/appflowy'
-        state: present
+- name: Levantar los servicios con Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: '/opt/appflowy'
+    state: present
