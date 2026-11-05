@@ -38,3 +38,10 @@
   become: true
   roles:
     - runner
+
+# 5. Despliegue de AppFlowy
+- name: Aprovisionar runner
+  hosts: flowy_nodes
+  become: true
+  roles:
+    - flowy
