@@ -1,0 +1,31 @@
+---
+- name: Actualizar caché de apt
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Instalar paquetes del sistema y soporte de entornos Python
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+      - curl
+      - git
+    state: present
+
+- name: Comprobar si Ollama ya está instalado
+  ansible.builtin.command: source /etc/environment && which ollama
+  register: ollama_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Descargar e instalar el binario de Ollama
+  ansible.builtin.shell: "curl -fsSL https://ollama.com/install.sh | sh"
+  when: ollama_check.rc != 0
+
+- name: Asegurar que el servicio systemd de Ollama está iniciado y habilitado
+  ansible.builtin.systemd:
+    name: ollama
+    state: started
+    enabled: true
