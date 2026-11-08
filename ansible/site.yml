@@ -40,8 +40,15 @@
     - runner
 
 # 5. Despliegue de AppFlowy
-- name: Aprovisionar runner
+- name: Aprovisionar flowy
   hosts: flowy_nodes
   become: true
   roles:
     - flowy
+
+# 6. Despliegue de IA
+- name: Aprovisionar ia
+  hosts: ia_nodes
+  become: true
+  roles:
+    - ia
