@@ -30,3 +30,16 @@
     name: ollama
     state: started
     enabled: true
+
+- name: Asegurar que /usr/local/bin está en el PATH global de /etc/profile.d/
+  ansible.builtin.copy:
+    dest: /etc/profile.d/ollama_path.sh
+    content: "export PATH=$PATH:/usr/local/bin\n"
+    mode: '0644'
+
+- name: Asegurar que /usr/local/bin está en el .bashrc de root
+  ansible.builtin.lineinfile:
+    path: /root/.bashrc
+    line: 'export PATH=$PATH:/usr/local/bin'
+    state: present
+    create: true
