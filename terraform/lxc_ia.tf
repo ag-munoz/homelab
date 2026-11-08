@@ -5,7 +5,7 @@ module "lxc_ia" {
   memory       = 2048
   ip_address   = "192.168.0.154/24"
   gateway      = "192.168.0.1"
-  unprivileged = true
+  unprivileged = false
   nesting      = true
   tags         = ["ia"]
   admin_ip     = var.admin_ip
