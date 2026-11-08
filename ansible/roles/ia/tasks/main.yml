@@ -4,7 +4,7 @@
     update_cache: true
     cache_valid_time: 3600
 
-- name: Instalar paquetes del sistema y soporte de entornos Python
+- name: Instalar paquetes del sistema, zstd y entorno Python
   ansible.builtin.apt:
     name:
       - python3
@@ -12,10 +12,11 @@
       - python3-venv
       - curl
       - git
+      - zstd 
     state: present
 
 - name: Comprobar si Ollama ya está instalado
-  ansible.builtin.command: source /etc/environment && which ollama
+  ansible.builtin.command: which ollama
   register: ollama_check
   ignore_errors: true
   changed_when: false
