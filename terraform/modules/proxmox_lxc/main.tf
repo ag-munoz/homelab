@@ -83,49 +83,17 @@ resource "proxmox_virtual_environment_firewall_rules" "lxc_firewall" {
   node_name    = "pve"
   container_id = proxmox_virtual_environment_container.lxc.id
 
-  rule {
-    type    = "in"
-    action  = "ACCEPT"
-    source  = var.proxy_ip
-    proto   = "tcp"
-    dport   = var.service_port
-    comment = "Permite acceso unicamente desde el Reverse Proxy"
-    enabled = var.proxy_ip != null && var.service_port != null
-  }
-
-  rule {
-    type    = "in"
-    action  = "ACCEPT"
-    proto   = "tcp"
-    dport   = "80,443"
-    comment = "Permite trafico HTTP/HTTPS de entrada al Proxy"
-    enabled = var.allow_public_web
-  }
-
-  rule {
-    type    = "in"
-    action  = "ACCEPT"
-    source  = var.admin_ip
-    proto   = "tcp"
-    dport   = "22"
-    comment = "Permite SSH desde la PC de administracion para Ansible"
-    enabled = var.admin_ip != null
-  }
-
-  rule {
-    type    = "out"
-    action  = "ACCEPT"
-    proto   = "udp"
-    dport   = "53"
-    comment = "Permite resolucion DNS externa"
-  }
-
-  rule {
-    type    = "out"
-    action  = "ACCEPT"
-    proto   = "tcp"
-    dport   = "80,443"
-    comment = "Permite trafico HTTP/HTTPS saliente a Internet"
+dynamic "rule" {
+    for_each = var.extra_firewall_rules
+    content {
+      type    = rule.value.type
+      action  = rule.value.action
+      source  = rule.value.source
+      dest    = rule.value.dest
+      proto   = rule.value.proto
+      dport   = rule.value.dport
+      comment = rule.value.comment
+    }
   }
 
   rule {
