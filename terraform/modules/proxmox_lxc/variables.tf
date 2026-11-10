@@ -57,3 +57,17 @@ variable "ssh_public_key" {
   type        = string
   description = "Clave pública SSH para el usuario root"
 }
+
+variable "extra_firewall_rules" {
+  description = "Lista de reglas de firewall adicionales específicas para este LXC"
+  type = list(object({
+    type    = string
+    action  = string
+    source  = optional(string)
+    dest    = optional(string)
+    proto   = optional(string)
+    dport   = optional(string)
+    comment = optional(string)
+  }))
+  default = []
+}
