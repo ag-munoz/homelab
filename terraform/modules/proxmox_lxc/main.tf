@@ -99,7 +99,7 @@ resource "proxmox_virtual_environment_firewall_rules" "lxc_firewall" {
   rule {
     type    = "in"
     action  = "ACCEPT"
-    source  = 192.168.0.152
+    source  = "192.168.0.152"
     proto   = "tcp"
     dport   = "22"
     comment = "Permite ejecucion de playbooks desde el Ansible Runner"
