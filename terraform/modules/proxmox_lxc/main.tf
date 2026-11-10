@@ -103,7 +103,6 @@ resource "proxmox_virtual_environment_firewall_rules" "lxc_firewall" {
     proto   = "tcp"
     dport   = "22"
     comment = "Permite ejecucion de playbooks desde el Ansible Runner"
-    enabled = var.runner_ip != null
   }
 
   rule {
