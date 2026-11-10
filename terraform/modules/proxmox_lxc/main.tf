@@ -83,7 +83,7 @@ resource "proxmox_virtual_environment_firewall_rules" "lxc_firewall" {
   node_name    = "pve"
   container_id = proxmox_virtual_environment_container.lxc.id
 
-dynamic "rule" {
+  dynamic "rule" {
     for_each = var.extra_firewall_rules
     content {
       type    = rule.value.type
@@ -97,10 +97,20 @@ dynamic "rule" {
   }
 
   rule {
+    type    = "in"
+    action  = "ACCEPT"
+    source  = 192.168.0.152
+    proto   = "tcp"
+    dport   = "22"
+    comment = "Permite ejecucion de playbooks desde el Ansible Runner"
+    enabled = var.runner_ip != null
+  }
+
+  rule {
     type    = "out"
     action  = "REJECT"
-    dest    = "192.168.0.0/24"
-    comment = "Bloquea salida a la LAN domestica"
+    dest    = "0.0.0.0/0"
+    comment = "Bloquea todo el trafico"
   }
 
 
