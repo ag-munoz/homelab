@@ -12,4 +12,37 @@ module "lxc_proxy" {
   allow_public_web = true
   ssh_public_key = var.ssh_public_key
   vmid   = 101
+  extra_firewall_rules = [
+    {
+      type    = "in"
+      action  = "ACCEPT"
+      proto   = "tcp"
+      dport   = "80,443"
+      comment = "Permite acceso web al proxy"
+    },
+    {
+      type    = "out"
+      action  = "ACCEPT"
+      dest    = "192.168.0.151" 
+      comment = "Salida hacia lxc_media"
+    },
+    {
+      type    = "out"
+      action  = "ACCEPT"
+      dest    = "192.168.0.152"
+      comment = "Salida hacia lxc_runner "
+    },
+    {
+      type    = "out"
+      action  = "ACCEPT"
+      dest    = "192.168.0.153"
+      comment = "Salida hacia lxc_appflowy "
+    },
+    {
+      type    = "out"
+      action  = "ACCEPT"
+      dest    = "192.168.0.154"
+      comment = "Salida hacia lxc_ia "
+    }
+  ]
 }
