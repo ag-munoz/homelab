@@ -107,7 +107,7 @@ resource "proxmox_virtual_environment_firewall_rules" "lxc_firewall" {
 
   rule {
     type    = "out"
-    action  = "REJECT"
+    action  = "DROP"
     dest    = "0.0.0.0/0"
     comment = "Bloquea todo el trafico"
   }
