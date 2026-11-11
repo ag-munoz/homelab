@@ -37,14 +37,14 @@ module "lxc_media" {
       comment = "Permite trafico P2P (UDP) entrante desde Internet"
     },
     {
-      type    = "in"
+      type    = "out"
       action  = "ACCEPT"
       proto   = "udp"
       dport   = "53"          
       comment = "Permite trafico DNS"
     },
     {
-      type    = "in"
+      type    = "out"
       action  = "ACCEPT"
       proto   = "tcp"
       dport   = "80,443"          
